@@ -8,7 +8,7 @@
 import Combine
 
 @available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension Publisher {
+public extension Publisher {
     
     /// Ignores all upstream errors, but passes along upstream elements.
     ///

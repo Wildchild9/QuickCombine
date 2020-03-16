@@ -9,10 +9,10 @@ import Combine
 
 
 @available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension Publishers {
+public extension Publishers {
     
     /// A publisher that ignores all upstream errors, but passes along upstream elements.
-    public struct IgnoreError<Upstream>: Publisher where Upstream: Publisher {
+    struct IgnoreError<Upstream>: Publisher where Upstream: Publisher {
         
         /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
