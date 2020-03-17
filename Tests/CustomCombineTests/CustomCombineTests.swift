@@ -47,6 +47,7 @@ final class CustomCombineTests: XCTestCase {
     func testIgnoreFailure() {
         let expectation1 = XCTestExpectation()
         let expectation2 = XCTestExpectation()
+        let expectation3 = XCTestExpectation()
 
         Just("")
             .tryMap { _ -> String in throw CustomError() }
@@ -65,24 +66,27 @@ final class CustomCombineTests: XCTestCase {
         Just("Hello, World!")
             .tryMap { str in
                 if str.isEmpty {
-                    throw CustomError()
+                    throw CustomError("Some error")
                 }
                 return str
             }
-            .ignoreFailure()
+            .mapError { $0 as! CustomError }
+            .ignoreFailure { error in
+                XCTAssertEqual(error.message, "Some error")
+                expectation2.fulfill()
+            }
             .handleEvents(receiveCompletion: { completion in
                 if case .failure = completion {
                     XCTFail()
                 }
-                expectation2.fulfill()
+                expectation3.fulfill()
             })
             .sink { str in
                 XCTAssertEqual("Hello, World!", str)
             }
             .cancel()
         
-        wait(for: [expectation1, expectation2], timeout: 5)
-        
+        wait(for: [expectation1, expectation2, expectation3], timeout: 5)
     }
     
     static var allTests = [

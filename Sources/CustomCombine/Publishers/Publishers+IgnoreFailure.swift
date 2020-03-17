@@ -23,13 +23,23 @@ public extension Publishers {
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
+        /// The handler for upstream errors.
+        public let handler: (_ error: Upstream.Failure) -> Void
+        
         public init(upstream: Upstream) {
             self.upstream = upstream
+            self.handler = { _ in }
+        }
+        
+        public init(upstream: Upstream, handler: @escaping (_ error: Upstream.Failure) -> Void) {
+            self.upstream = upstream
+            self.handler = handler
         }
        
         public func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
             upstream
-                .catch { _ -> Empty<Output, Never> in
+                .catch { error -> Empty<Output, Never> in
+                    self.handler(error)
                     return Empty()
                 }
                 .subscribe(subscriber)
