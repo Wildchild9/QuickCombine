@@ -1,5 +1,5 @@
 //
-//  IgnoreError.swift
+//  IgnoreFailure.swift
 //  
 //
 //  Created by Noah Wilder on 2020-03-16.
@@ -14,8 +14,8 @@ public extension Publisher {
     ///
     /// The failure type of this publisher is `Never`.
     /// - Returns: A publisher that ignores all upstream errors.
-    func ignoreError() -> Publishers.IgnoreError<Self> {
-        return Publishers.IgnoreError(upstream: self)
+    func ignoreFailure() -> Publishers.IgnoreFailure<Self> {
+        return Publishers.IgnoreFailure(upstream: self)
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  Publishers+IgnoreError.swift
+//  Publishers+IgnoreFailure.swift
 //  
 //
 //  Created by Noah Wilder on 2020-03-16.
@@ -12,7 +12,7 @@ import Combine
 public extension Publishers {
     
     /// A publisher that ignores all upstream errors, but passes along upstream elements.
-    struct IgnoreError<Upstream>: Publisher where Upstream: Publisher {
+    struct IgnoreFailure<Upstream>: Publisher where Upstream: Publisher {
         
         /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
@@ -26,14 +26,8 @@ public extension Publishers {
         public init(upstream: Upstream) {
             self.upstream = upstream
         }
-        
-        /// This function is called to attach the specified `Subscriber` to this `Publisher` by `subscribe(_:)`
-        ///
-        /// - SeeAlso: `subscribe(_:)`
-        /// - Parameters:
-        ///     - subscriber: The subscriber to attach to this `Publisher`.
-        ///                   once attached it can begin to receive values.
-        public func receive<S>(subscriber: S) where S: Subscriber, Publishers.IgnoreError<Upstream>.Failure == S.Failure, Publishers.IgnoreError<Upstream>.Output == S.Input {
+       
+        public func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
             upstream
                 .catch { _ -> Empty<Output, Never> in
                     return Empty()
