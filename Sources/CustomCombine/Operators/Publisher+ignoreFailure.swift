@@ -1,5 +1,5 @@
 //
-//  IgnoreFailure.swift
+//  Publisher+ignoreFailure.swift
 //  
 //
 //  Created by Noah Wilder on 2020-03-16.
@@ -28,5 +28,4 @@ public extension Publisher {
     }
     
 }
-
 

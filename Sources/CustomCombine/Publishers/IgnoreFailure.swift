@@ -1,5 +1,5 @@
 //
-//  Publishers+IgnoreFailure.swift
+//  IgnoreFailure.swift
 //  
 //
 //  Created by Noah Wilder on 2020-03-16.
