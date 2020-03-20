@@ -14,17 +14,15 @@ public extension Publishers {
     /// A publisher that ignores all upstream errors, but passes along upstream elements.
     struct IgnoreFailure<Upstream>: Publisher where Upstream: Publisher {
         
-        /// The kind of values published by this publisher.
         public typealias Output = Upstream.Output
         
-        /// The kind of errors this publisher publishes.
         public typealias Failure = Never
         
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
         
         /// The handler for upstream errors.
-        public let handler: (_ error: Upstream.Failure) -> Void
+        public let handler: (Upstream.Failure) -> Void
         
         public init(upstream: Upstream) {
             self.upstream = upstream
