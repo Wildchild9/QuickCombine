@@ -16,8 +16,10 @@ public extension Publishers {
         
         /// A type that represents a closure to invoke in the future when an element is available.
         ///
-        /// The promise closure receives one paramater: a single element published by a `AsyncMap` publisher.
-        public typealias Promise = (Output) -> Void
+        /// - Parameters:
+        ///    - result: An element published by an `AsyncMap` publisher.
+        ///    - completionState: Indicates whether the publisher will continue emitting values. If `.finished`, the publisher ceases emitting values and passes along a finished completion state.
+        public typealias Promise = (Output, CompletionState) -> Void
         
         /// The publisher from which this publisher receives elements.
         public let upstream: Upstream
