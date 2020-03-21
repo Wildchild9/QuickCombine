@@ -260,6 +260,27 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation1, expectation2, expectation3], timeout: 2)
     }
     
+    func testCompactMap() {
+        let expectation = XCTestExpectation()
+
+        Just("Hello, World!")
+            .compactMap(\.first)
+            .sink { value in
+                XCTAssertEqual(value, "H")
+                expectation.fulfill()
+            }
+            .cancel()
+        
+        Just("")
+            .compactMap(\.last)
+            .sink { value in
+                XCTFail()
+            }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
@@ -269,6 +290,7 @@ final class CustomCombineTests: XCTestCase {
         ("testTryAsyncMap", testTryAsyncMap),
         ("testFutureMap", testFutureMap),
         ("testTryFutureMap", testTryFutureMap),
+        ("testCompactMap", testCompactMap),
     ]
 }
 
