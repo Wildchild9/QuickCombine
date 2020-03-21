@@ -109,7 +109,6 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
-    
     func testTryAsync() {
         let expectation1 = XCTestExpectation()
         let expectation2 = XCTestExpectation()
@@ -183,6 +182,22 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation1, expectation2], timeout: 2)
     }
     
+    func testFutureMap() {
+        let expectation = XCTestExpectation()
+        expectation.assertForOverFulfill = true
+        
+        Just("Hello")
+            .futureMap { (value, promise: (String) -> Void) in
+                promise(value + ", World!")
+                promise("Cannot reach")
+            }
+            .sink { _ in
+                expectation.fulfill()
+            }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
     
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
@@ -191,6 +206,7 @@ final class CustomCombineTests: XCTestCase {
         ("testTryAsync", testTryAsync),
         ("testAsyncMap", testAsyncMap),
         ("testTryAsyncMap", testTryAsyncMap),
+        ("testFutureMap", testFutureMap),
     ]
 }
 
