@@ -281,6 +281,31 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
+    func testEraseToAnyError() {
+        let expectation = XCTestExpectation()
+        
+        expectation.expectedFulfillmentCount = 2
+        
+        Future<String, CustomError> { promise in
+            promise(.failure(CustomError()))
+        }
+            .handleEvents(receiveCompletion: { completion in
+                if case .failure = completion {
+                    expectation.fulfill()
+                }
+            })
+            .eraseToAnyError()
+            .sink(receiveCompletion: { completion in
+                if case .failure = completion {
+                    expectation.fulfill()
+                }
+            }) { _ in }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
+
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
@@ -291,6 +316,7 @@ final class CustomCombineTests: XCTestCase {
         ("testFutureMap", testFutureMap),
         ("testTryFutureMap", testTryFutureMap),
         ("testCompactMap", testCompactMap),
+        ("testEraseToAnyError", testEraseToAnyError),
     ]
 }
 
