@@ -2,7 +2,6 @@ import XCTest
 import Combine
 @testable import CustomCombine
 
-@available(OSX 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 final class CustomCombineTests: XCTestCase {
     func testReplaceNilWithError() {
         let nilString: String? = nil
@@ -63,7 +62,7 @@ final class CustomCombineTests: XCTestCase {
             }
             .cancel()
         
-        Just("Hello, World!")
+        Just("")
             .tryMap { str in
                 if str.isEmpty {
                     throw CustomError("Some error")
@@ -81,6 +80,7 @@ final class CustomCombineTests: XCTestCase {
                 }
                 expectation3.fulfill()
             })
+            .eraseToAnyPublisher()
             .sink { str in
                 XCTAssertEqual("Hello, World!", str)
             }
@@ -89,14 +89,35 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation1, expectation2, expectation3], timeout: 5)
     }
     
+    func testAsync() {
+        let expectation = XCTestExpectation()
+        
+        expectation.assertForOverFulfill = true
+        expectation.expectedFulfillmentCount = 5
+        Async<String> { promise in
+            promise("a")
+            promise("b")
+            promise("c")
+            promise("d")
+            promise("e")
+        }
+            .sink { _ in
+                expectation.fulfill()
+            }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
+        ("testAsync", testAsync),
     ]
 }
 
 
-struct CustomError: Error {
+fileprivate struct CustomError: Error {
     var message: String
     var file: String
     var line: UInt
