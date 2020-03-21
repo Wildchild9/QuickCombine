@@ -1,5 +1,6 @@
 import XCTest
 import Combine
+import SwiftUI
 @testable import CustomCombine
 
 final class CustomCombineTests: XCTestCase {
@@ -334,6 +335,36 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
 
+    func testAssign() {
+        class Foo {
+            var a = ""
+            init() { }
+        }
+        
+        let foo = Foo()
+        
+        Just(123)
+            .assign(\.description, to: \.a, on: foo)
+            .cancel()
+        
+        XCTAssertEqual(foo.a, "123")
+        
+        var bar = 7
+        
+        Just(123)
+            .assign(to: Binding(get: { bar }, set: { bar = $0 }))
+            .cancel()
+       
+        XCTAssertEqual(bar, 123)
+        
+        var baz = 4
+
+        Just("Hello, World!")
+            .assign(\.count, to: Binding(get: { baz }, set: { baz = $0 }))
+            .cancel()
+        
+        XCTAssertEqual(baz, "Hello, World!".count)
+    }
     
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
@@ -347,6 +378,7 @@ final class CustomCombineTests: XCTestCase {
         ("testCompactMap", testCompactMap),
         ("testEraseToAnyError", testEraseToAnyError),
         ("testPassthrough", testPassthrough),
+        ("testAssign", testAssign),
     ]
 }
 
