@@ -6,6 +6,7 @@
 //
 
 import Combine
+import SwiftUI
 
 public extension Publisher where Failure == Never {
     /// Assigns a property of each element from the upstream publisher to a property on an object.
@@ -23,8 +24,6 @@ public extension Publisher where Failure == Never {
     
 }
 
-#if canImport(SwiftUI)
-import SwiftUI
 public extension Publisher where Failure == Never {
     /// Assigns each element from the upstream publisher to a binding.
     ///
@@ -48,5 +47,3 @@ public extension Publisher where Failure == Never {
         }
     }
 }
-
-#endif

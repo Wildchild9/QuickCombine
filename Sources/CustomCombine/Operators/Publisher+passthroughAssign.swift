@@ -6,6 +6,7 @@
 //
 
 import Combine
+import SwiftUI
 
 public extension Publisher {
     /// Assigns each element from the upstream publisher to a property on an object.
@@ -34,8 +35,6 @@ public extension Publisher {
     }
 }
 
-#if canImport(SwiftUI)
-import SwiftUI
 public extension Publisher {
     /// Assigns each element from the upstream publisher to a binding.
     ///
@@ -59,4 +58,3 @@ public extension Publisher {
         }
     }
 }
-#endif
