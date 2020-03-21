@@ -139,17 +139,17 @@ final class QuickCombineTests: XCTestCase {
     func testAsyncMap() {
         let expectation = XCTestExpectation()
         Just("hello")
-            .asyncMap { (value, promise: (String) -> Void) in
-                promise("a")
-                promise("bc")
-            }
-            .collect(2)
-            .sink { value in
-                let str = value.joined()
-                XCTAssertEqual(str, "abc")
-                expectation.fulfill()
-            }
-            .cancel()
+            .asyncMap { (value, promise: (String, CompletionState) -> Void) in
+                promise("a", .continue)
+                promise("bc", .continue)
+        }
+        .collect(2)
+        .sink { value in
+            let str = value.joined()
+            XCTAssertEqual(str, "abc")
+            expectation.fulfill()
+        }
+        .cancel()
         
         wait(for: [expectation], timeout: 2)
     }
