@@ -304,6 +304,35 @@ final class CustomCombineTests: XCTestCase {
         
         wait(for: [expectation], timeout: 2)
     }
+    
+    func testPassthrough() {
+        let expectation = XCTestExpectation()
+        
+        Just(1)
+            .passthrough { XCTAssertEqual($0, 1) }
+            .map { value in value * 10 }
+            .passthrough { XCTAssertEqual($0, 10) }
+            .tryMap { value throws -> Int in
+                if value == 10 {
+                    throw CustomError()
+                } else {
+                    return value
+                }
+            }
+            .passthrough { value in
+                XCTFail()
+            }
+            .sink(receiveCompletion: { completion in
+                guard case .failure = completion else {
+                    XCTFail()
+                    return
+                }
+                expectation.fulfill()
+            }) { _ in }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
 
     
     static var allTests = [
@@ -317,6 +346,7 @@ final class CustomCombineTests: XCTestCase {
         ("testTryFutureMap", testTryFutureMap),
         ("testCompactMap", testCompactMap),
         ("testEraseToAnyError", testEraseToAnyError),
+        ("testPassthrough", testPassthrough),
     ]
 }
 
