@@ -136,12 +136,30 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation1, expectation2], timeout: 2)
     }
     
+    func testAsyncMap() {
+        let expectation = XCTestExpectation()
+        Just("hello")
+            .asyncMap { (value, promise: (String) -> Void) in
+                promise("a")
+                promise("bc")
+            }
+            .collect(2)
+            .sink { value in
+                let str = value.joined()
+                XCTAssertEqual(str, "abc")
+                expectation.fulfill()
+            }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
     
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
         ("testAsync", testAsync),
         ("testTryAsync", testTryAsync),
+        ("testAsyncMap", testAsyncMap),
     ]
 }
 
