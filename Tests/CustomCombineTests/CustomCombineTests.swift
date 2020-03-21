@@ -199,6 +199,67 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
+    func testTryFutureMap() {
+        let expectation1 = XCTestExpectation()
+        let expectation2 = XCTestExpectation()
+        let expectation3 = XCTestExpectation()
+
+        expectation1.assertForOverFulfill = true
+        
+        Just("Hello")
+            .tryFutureMap { value, promise in
+                promise(.success(value + ", World!"))
+                promise(.success("Cannot reach"))
+            }
+            .catch { _ in Empty<String, Never>() }
+            .sink { _ in
+                expectation1.fulfill()
+            }
+            .cancel()
+        
+        Just("")
+            .setFailureType(to: Error.self)
+            .tryFutureMap { (value, promise: (Result<String, Error>) -> Void) in
+                if value.isEmpty {
+                    throw CustomError()
+                } else {
+                    promise(.success("It is not empty!"))
+                }
+            }
+            .sink(receiveCompletion: { completion in
+                guard case .failure = completion else {
+                    XCTFail()
+                    return
+                }
+                expectation2.fulfill()
+            }, receiveValue: { _ in
+                XCTFail()
+            })
+            .cancel()
+        
+        Just("")
+            .setFailureType(to: CustomError.self)
+            .tryFutureMap { (value, promise: (Result<String, CustomError>) -> Void) in
+                if value.isEmpty {
+                    promise(.failure(CustomError()))
+                } else {
+                    promise(.success("It is not empty!"))
+                }
+            }
+            .sink(receiveCompletion: { completion in
+                guard case .failure = completion else {
+                    XCTFail()
+                    return
+                }
+                expectation3.fulfill()
+            }, receiveValue: { _ in
+                XCTFail()
+            })
+            .cancel()
+        
+        wait(for: [expectation1, expectation2, expectation3], timeout: 2)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
@@ -207,6 +268,7 @@ final class CustomCombineTests: XCTestCase {
         ("testAsyncMap", testAsyncMap),
         ("testTryAsyncMap", testTryAsyncMap),
         ("testFutureMap", testFutureMap),
+        ("testTryFutureMap", testTryFutureMap),
     ]
 }
 
