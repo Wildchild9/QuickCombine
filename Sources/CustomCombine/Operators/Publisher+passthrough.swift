@@ -8,7 +8,6 @@
 import Combine
 
 public extension Publisher {
-    
     /// Performs a closure with all elements of the upstream publisher.
     /// - Parameter receiveOutput: A closure to invoke with each upstream element.
     /// - Returns: A publisher with that immediately emits elements from the upstream publisher as they are produced.

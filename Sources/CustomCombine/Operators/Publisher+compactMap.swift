@@ -13,7 +13,6 @@ public extension Publisher {
     /// - Parameter keyPath: The key path of a property on `Output`.
     /// - Returns: A publisher that republishes all non-`nil` values of the key path.
     func compactMap<T>(_ keyPath: KeyPath<Output, T?>) -> Publishers.CompactMap<Self, T> {
-        return self
-            .compactMap { $0[keyPath: keyPath] }
+        return compactMap { $0[keyPath: keyPath] }
     }
 }

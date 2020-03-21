@@ -31,9 +31,8 @@ public extension Publisher where Failure == Never {
     /// - Parameter binding: The binding on which to assign the value.
     /// - Returns: A cancellable instance; used when you end assignment of the received value. Deallocation of the result will tear down the subscription stream.
     func assign(to binding: Binding<Output>) -> AnyCancellable {
-        return self
-            .sink { value in
-                binding.wrappedValue = value
+        sink { value in
+            binding.wrappedValue = value
         }
     }
     
@@ -44,9 +43,8 @@ public extension Publisher where Failure == Never {
     ///   - binding: The binding on which to assign the value.
     /// - Returns: A cancellable instance; used when you end assignment of the received value. Deallocation of the result will tear down the subscription stream.
     func assign<T>(_ keyPath: KeyPath<Output, T>, to binding: Binding<T>) -> AnyCancellable {
-        return self
-            .sink { value in
-                binding.wrappedValue = value[keyPath: keyPath]
+        sink { value in
+            binding.wrappedValue = value[keyPath: keyPath]
         }
     }
 }

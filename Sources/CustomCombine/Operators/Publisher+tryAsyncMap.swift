@@ -8,7 +8,6 @@
 import Combine
 
 public extension Publisher {
-    
     /// Transforms all elements from the upstream publisher asyncronously with a provided closure.
     ///
     /// - Parameters:
@@ -22,7 +21,6 @@ public extension Publisher {
 }
 
 public extension Publisher where Failure == Error {
-    
     /// Transforms all elements from the upstream publisher asyncronously with a provided error-throwing closure.
     ///
     /// - Parameters:

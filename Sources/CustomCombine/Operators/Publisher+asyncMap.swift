@@ -7,10 +7,7 @@
 
 import Combine
 
-
-
 public extension Publisher {
-    
     /// Transforms all elements from the upstream publisher asyncronously with a provided closure.
     ///
     /// - Parameters:

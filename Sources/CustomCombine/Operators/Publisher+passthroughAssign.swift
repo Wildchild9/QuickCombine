@@ -34,7 +34,6 @@ public extension Publisher {
     }
 }
 
-
 #if canImport(SwiftUI)
 import SwiftUI
 public extension Publisher {

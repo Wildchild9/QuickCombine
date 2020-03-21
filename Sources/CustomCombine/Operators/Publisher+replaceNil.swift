@@ -17,17 +17,15 @@ extension Optional: OptionalConvertible {
 }
 
 public extension Publisher where Output: OptionalConvertible {
-    
     /// Replaces `nil` elements in the stream with the provided error.
     /// - Parameter error: The error to use when replacing `nil`.
     /// - Returns: A publisher that replaces `nil` elements from the upstream publisher with the provided error.
     func replaceNil(with error: Failure) -> Publishers.TryMap<Self, Output.Wrapped> {
-        self
-            .tryMap { value in
-                guard let unwrappedValue = value.asOptional else {
-                    throw error
-                }
-                return unwrappedValue
+        tryMap { value in
+            guard let unwrappedValue = value.asOptional else {
+                throw error
             }
+            return unwrappedValue
+        }
     }
 }
