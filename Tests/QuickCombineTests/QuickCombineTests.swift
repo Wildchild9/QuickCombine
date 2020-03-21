@@ -94,18 +94,18 @@ final class QuickCombineTests: XCTestCase {
         let expectation = XCTestExpectation()
         
         expectation.assertForOverFulfill = true
-        expectation.expectedFulfillmentCount = 5
+        expectation.expectedFulfillmentCount = 4
         Async<String> { promise in
-            promise("a")
-            promise("b")
-            promise("c")
-            promise("d")
-            promise("e")
+            promise("a", .continue)
+            promise("b", .continue)
+            promise("c", .continue)
+            promise("d", .finished)
+            promise("e", .continue)
         }
-            .sink { _ in
-                expectation.fulfill()
-            }
-            .cancel()
+        .sink { _ in
+            expectation.fulfill()
+        }
+        .cancel()
         
         wait(for: [expectation], timeout: 2)
     }
