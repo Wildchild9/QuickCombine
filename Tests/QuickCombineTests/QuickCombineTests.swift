@@ -1,9 +1,9 @@
 import XCTest
 import Combine
 import SwiftUI
-@testable import CustomCombine
+@testable import QuickCombine
 
-final class CustomCombineTests: XCTestCase {
+final class QuickCombineTests: XCTestCase {
     func testReplaceNilWithError() {
         let nilString: String? = nil
         let presentString: String? = "Some string"
