@@ -109,10 +109,39 @@ final class CustomCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
+    
+    func testTryAsync() {
+        let expectation1 = XCTestExpectation()
+        let expectation2 = XCTestExpectation()
+        
+        expectation1.expectedFulfillmentCount = 2
+        expectation2.expectedFulfillmentCount = 3
+        
+        TryAsync<String, CustomError> { promise in
+            promise(.success("a"))
+            promise(.failure(CustomError()))
+            promise(.success("b"))
+            promise(.failure(CustomError()))
+            promise(.success("c"))
+        }
+            .sink(receiveCompletion: { completion in
+                if case .failure = completion {
+                    expectation1.fulfill()
+                }
+            }) { _ in
+                expectation2.fulfill()
+            }
+            .cancel()
+        
+        wait(for: [expectation1, expectation2], timeout: 2)
+    }
+    
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
         ("testAsync", testAsync),
+        ("testTryAsync", testTryAsync),
     ]
 }
 
