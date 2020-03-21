@@ -366,6 +366,40 @@ final class CustomCombineTests: XCTestCase {
         XCTAssertEqual(baz, "Hello, World!".count)
     }
     
+    func testPassthroughAssign() {
+        let expectation = XCTestExpectation()
+        class Foo {
+            var a = ""
+            init() { }
+        }
+        
+        let foo = Foo()
+        var bar = 7
+        var baz = ""
+        
+        Just("abcde")
+            .passthroughAssign(\.count.description, to: \.a, on: foo)
+            .handleEvents(receiveOutput: { _ in XCTAssertEqual(foo.a, "5") })
+            .map { $0 + "fghij" }
+            .passthroughAssign(to: \.a, on: foo)
+            .handleEvents(receiveOutput: { _ in XCTAssertEqual(foo.a, "abcdefghij") })
+            .map(\.count)
+            .passthroughAssign(to: Binding(get: { bar }, set: { bar = $0 }))
+            .handleEvents(receiveOutput: { _ in XCTAssertEqual(bar, 10) })
+            .map { "\($0)0abc" }
+            .passthroughAssign(\.description, to: Binding(get: { baz }, set: { baz = $0 }))
+            .handleEvents(receiveOutput: { _ in XCTAssertEqual(baz, "100abc") })
+            .map { $0.prefix(3) }
+            .compactMap { Int($0) }
+            .sink { value in
+                XCTAssertEqual(value, 100)
+                expectation.fulfill()
+            }
+            .cancel()
+        
+        wait(for: [expectation], timeout: 2)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
@@ -379,6 +413,7 @@ final class CustomCombineTests: XCTestCase {
         ("testEraseToAnyError", testEraseToAnyError),
         ("testPassthrough", testPassthrough),
         ("testAssign", testAssign),
+        ("testPassthroughAssign", testPassthroughAssign),
     ]
 }
 
