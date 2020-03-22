@@ -7,7 +7,7 @@
 
 import Combine
 
-/// A publisher that asyncronously produces values or errors.
+/// A publisher that asynchronously produces values or errors.
 public struct TryAsync<Output, Failure>: Publisher where Failure: Error {
     
     /// A type that represents a closure to invoke in the future, when an element or error is available.

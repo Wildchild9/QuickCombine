@@ -8,12 +8,12 @@
 import Combine
 
 public extension Publisher {
-    /// Transforms all elements from the upstream publisher asyncronously with a provided closure.
+    /// Transforms all elements from the upstream publisher asynchronously with a provided closure.
     ///
     /// - Important: The provided `transform` closure may only invoke its `promise` closure once. Any additional invocations of `promise` will be ignored.
     ///
     /// - Parameters:
-    ///   - transform: Aclosure that takes an element and a promise as its parameters and, using the promise, asyncronously produces a new elements and/or errors.
+    ///   - transform: Aclosure that takes an element and a promise as its parameters and, using the promise, asynchronously produces a new elements and/or errors.
     ///   - value: The upstream element.
     ///   - promise: The closure to invoke in the future, when an elemen or an error is available.
     /// - Returns: A publisher that uses a promise in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
@@ -23,12 +23,12 @@ public extension Publisher {
 }
 
 public extension Publisher where Failure == Error {
-    /// Transforms all elements from the upstream publisher asyncronously with a provided error-throwing closure.
+    /// Transforms all elements from the upstream publisher asynchronously with a provided error-throwing closure.
     ///
     /// - Important: The provided `transform` closure may only invoke its `promise` closure once. Any additional invocations of `promise` will be ignored.
     ///
     /// - Parameters:
-    ///   - transform: An error-throwing closure that takes an element and a promise as its parameters and, using the promise, asyncronously produces a new elements and/or errors.
+    ///   - transform: An error-throwing closure that takes an element and a promise as its parameters and, using the promise, asynchronously produces a new elements and/or errors.
     ///   - value: The upstream element.
     ///   - promise: The closure to invoke in the future, when an elemen or an error is available.
     /// - Returns: A publisher that uses a promise in the provided closure to map elements from the upstream publisher to new elements that it then publishes.

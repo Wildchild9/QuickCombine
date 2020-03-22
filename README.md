@@ -11,7 +11,7 @@ QuickCombine provides additional operators and publishers to boost your producti
   - [`TryAsync`](#tryasync)
   
 - **[Operators](#operators)**
-  - Asyncronous:
+  - Asynchronous:
     - [`asyncMap`](#asyncmap)
     - [`tryAsyncMap`](#tryasyncmap)
     - [`futureMap`](#futuremap)
@@ -31,7 +31,7 @@ QuickCombine provides additional operators and publishers to boost your producti
 ## Publishers
 
 #### `Async`
-The `Async` publisher allows you to easily work with asyncronous code that can produce more than one value over time.
+The `Async` publisher allows you to easily work with asynchronous code that can produce more than one value over time.
 ```swift
 Async<String> { promise in
     promise("a")
@@ -52,12 +52,12 @@ This publisher can be particularly useful when writing Combine code for database
   ----
 #### `TryAsync`
 
-The `TryAsync` published is similar to the `Async` publisher, except its promise is a `Result`. This allows you to work with asyncronous code that can produce errors. 
+The `TryAsync` published is similar to the `Async` publisher, except its promise is a `Result`. This allows you to work with asynchronous code that can produce errors. 
 
-In the following example, `someAsyncronousCallback` produces a closure of type `(_ result: String?, _ error: Error?) -> Void`. 
+In the following example, `someAsynchronousCallback` produces a closure of type `(_ result: String?, _ error: Error?) -> Void`. 
 ```swift
 TryAsync<String, Error> { promise in
-    someAsyncronousCallback { result, error in
+    someAsynchronousCallback { result, error in
         if let error = error {
             promise(.failure(error))
         } else {

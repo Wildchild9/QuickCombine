@@ -7,7 +7,7 @@
 
 import Combine
 
-/// A publisher that asyncronously produces values.
+/// A publisher that asynchronously produces values.
 public struct Async<Output>: Publisher {
     
     public typealias Failure = Never
