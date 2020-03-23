@@ -4,6 +4,11 @@
 
 QuickCombine provides additional operators and publishers to boost your productivity with Apple's [Combine framework](https://developer.apple.com/documentation/combine).
 
+## Compatibility
+
+A minimum of **Swift 5.1** is required to build QuickCombine (Xcode 11).
+
+
 ## Overview
 
 - **[Publishers](#publishers)**
