@@ -89,7 +89,7 @@ This operator asynchronously maps each element for the upstream publisher to one
 
 In the following example, `futureMap` is used to retrieve the value at a specific location in a database.
 ```swift
-Just(someDatabasePath)
+Just("Some/Database/Path")
     .futureMap { path, promise in
         getValueInDatabase(at: path) { value in
             promise((path, value))
@@ -105,10 +105,10 @@ This operator is the same as `futureMap` with one notable exception, `tryFutureM
 
 In the following example, `tryFutureMap` is used to retrieve the value at a specific location in a database, passing any errors downstream. If the request succeeds, the value is printed, otherwise, the error message is printed.
 ```swift
-Just(someDatabasePath)
+Just("Some/Database/Path")
     .setFailureType(to: DatabaseError.self)
     .tryFutureMap { path, promise in
-        retrieveDatabaseValue(at: path) { error, value in
+    retrieveDatabaseValue(at: path) { result, error in
             if let error = error {
                 promise(.failure(error))
             } else {
@@ -137,6 +137,9 @@ Just("Some/Database/Path")
             promise(newValue)
         })
     }
+    .sink { newValue in
+        print("Value changed to: \(newValue)")
+    }
 ```
 
 #### `tryAsyncMap`
@@ -154,6 +157,13 @@ Just("Some/Database/Path")
             }
         })
     }
+    .sink(receiveCompletion: { completion in
+        if case .failure(.couldNotAccessValue) = completion {
+            print("Could not access changed value")
+        }
+    }, receiveValue: { newValue in 
+        print("Value changed to: \(newValue)")
+    })
 ```
 In the case that throwing functions are used within the body of `tryAsyncMap`, the `Failure` type of the resultant publisher will be `Error`.
 
