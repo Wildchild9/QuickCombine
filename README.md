@@ -85,7 +85,7 @@ QuickCombine provides 4 operators for asynchronous mapping operations, `futureMa
 | Can produce multiple downstream outputs for each upstream element (one to many) | ❌ | ❌ | ✅ | ✅ |
 
 #### `futureMap`
-This operator asynchronously maps each element for the upstream publisher to one output using promises. Upon the first promise being called, `futureMap` will ignore all subsequent promises and pass a finished completion state downstream. Since `asyncMap` cannot produce any errors, its error type is `Never`. For an operator with the same functionality as `futureMap` but with error propagation, see [`tryFutureMap`](#tryfuturemap).
+This operator asynchronously maps each element for the upstream publisher to one output using promises. Upon the first promise being called, `futureMap` will ignore all subsequent promises and pass a finished completion state downstream. Since `futureMap` cannot produce any errors, its error type is `Never`. For an operator with the same functionality as `futureMap` but with error propagation, see [`tryFutureMap`](#tryfuturemap).
 
 In the following example, `futureMap` is used to retrieve the value at a specific location in a database.
 ```swift
