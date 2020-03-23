@@ -420,6 +420,50 @@ final class QuickCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
+    func testAsynchronousCode() {
+        func async(_ block: @escaping (Result<String, CustomError>) -> Void) {
+            for i in 0..<4 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(i)) {
+                    if i > 2 {
+                        block(.failure(CustomError()))
+                    } else {
+                        block(.success("\(i)"))
+                    }
+                }
+            }
+        }
+        
+        let errorExpectation = XCTestExpectation(description: "Expect 1 error")
+        let valueExpectation = XCTestExpectation(description: "Expect 3 values")
+        
+        valueExpectation.expectedFulfillmentCount = 3
+        
+        func staticType<T>(of _: T) -> String {
+            return "\(T.self)"
+        }
+        
+        Just("abc")
+            .tryAsyncMap { (value, promise: @escaping (Result<String, CustomError>) -> Void) in
+                async { result in
+                    promise(result)
+                    print(result)
+                }
+        }
+        .print()
+        .catch { error -> Empty<String, Never> in
+            XCTAssertEqual(staticType(of: error), "CustomError")
+            print("hello")
+            errorExpectation.fulfill()
+            return Empty()
+        }
+        .print()
+        .sink { value in
+            valueExpectation.fulfill()
+        }
+        
+        wait(for: [valueExpectation, errorExpectation], timeout: 5)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
