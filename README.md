@@ -75,12 +75,12 @@ TryAsync<String, Error> { promise in
 ## Operators
 
 ### Asynchronous Mapping
-QuickCombine provides 4 operators for asynchronous mapping operations, `asyncMap`, `tryAsyncMap`, `futureMap`, and `tryFutureMap`. The following tables compares the features of the 4 operators.
+QuickCombine provides 4 operators for asynchronous mapping operations, `futureMap`, `tryFutureMap`, `asyncMap`, and `tryAsyncMap`. The following tables compares the features of the 4 operators.
 
 | Features | [`futureMap`](#futuremap) | [`tryFutureMap`](#tryfuturemap) | [`asyncMap`](#asyncmap) | [`tryAsyncMap`](#tryasyncmap) |
 | :--- | :---: | :---: | :---: | :---: |
 | Supports asynchronous execution | ✅ | ✅ | ✅ | ✅ |
-| Supports error propogation | ✅ | ❌ | ✅ | ❌ |
+| Supports error propogation | ❌ | ✅ | ❌ | ✅ |
 | Produces only one downstream output for each upstream element (one to one) | ✅ | ✅ | ❌ | ❌ |
 | Can produce multiple downstream outputs for each upstream element (one to many) | ❌ | ❌ | ✅ | ✅ |
 
