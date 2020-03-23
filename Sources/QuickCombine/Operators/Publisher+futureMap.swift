@@ -17,7 +17,7 @@ public extension Publisher {
     ///   - value: The upstream element.
     ///   - promise: The closure to invoke in the future, when an element is available.
     /// - Returns: A publisher that uses a promise in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
-    func futureMap<T>(transform: @escaping (_ value: Output, _ promise: Publishers.FutureMap<Self, T>.Promise) -> Void) -> Publishers.FutureMap<Self, T> {
+    func futureMap<T>(transform: @escaping (_ value: Output, _ promise: (T) -> Void) -> Void) -> Publishers.FutureMap<Self, T> {
         return Publishers.FutureMap(upstream: self, transform: transform)
     }
 }
