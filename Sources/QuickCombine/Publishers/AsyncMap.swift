@@ -37,8 +37,8 @@ public extension Publishers {
                         self.transform(value, promise)
                     }
                     .setFailureType(to: Failure.self)
-            }
-            .subscribe(subscriber)
+                }
+                .subscribe(subscriber)
         }
     }
 }

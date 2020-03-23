@@ -36,12 +36,11 @@ public extension Publishers {
                     TryAsync { promise in
                         self.transform(value, promise)
                     }
-            }
-            .subscribe(subscriber)
+                }
+                .subscribe(subscriber)
         }
     }
 }
-
 
 extension Publishers.TryAsyncMap where Failure == Error {
     public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: Promise) throws -> Void) {

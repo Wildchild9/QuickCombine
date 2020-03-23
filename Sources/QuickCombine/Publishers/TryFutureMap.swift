@@ -37,8 +37,8 @@ public extension Publishers {
                     Future<Output, Failure> { promise in
                         self.transform(value, promise)
                     }
-            }
-            .subscribe(subscriber)
+                }
+                .subscribe(subscriber)
         }
     }
 }
