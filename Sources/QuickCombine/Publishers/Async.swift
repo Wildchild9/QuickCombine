@@ -24,7 +24,7 @@ public struct Async<Output>: Publisher {
     /// - Parameters:
     ///   - fulfill: An `Async.Promise` that the publisher invokes when the publisher emits elements.
     ///   - promise: A closure that is invoked in the future when an element is available. This closure may be invoked multiple times.
-    public init(_ fulfill: @escaping (_ promise: Promise) -> Void) {
+    public init(_ fulfill: @escaping (_ promise: @escaping Promise) -> Void) {
         self.task = fulfill
     }
     

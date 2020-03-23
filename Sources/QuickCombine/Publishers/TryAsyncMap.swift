@@ -25,7 +25,7 @@ public extension Publishers {
         /// The closure that asynchronously transforms upstream elements using a promise closure that can be invoked multiple times.
         public let transform: (Upstream.Output, Promise) -> Void
         
-        public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: Promise) -> Void) {
+        public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: @escaping Promise) -> Void) {
             self.upstream = upstream
             self.transform = transform
         }
@@ -43,7 +43,7 @@ public extension Publishers {
 }
 
 extension Publishers.TryAsyncMap where Failure == Error {
-    public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: Promise) throws -> Void) {
+    public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: @escaping Promise) throws -> Void) {
         self.upstream = upstream
         self.transform = { value, promise in
             do {

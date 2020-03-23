@@ -22,7 +22,7 @@ public struct TryAsync<Output, Failure>: Publisher where Failure: Error {
     /// - Parameters:
     ///   - attemptToFulfill: A `TryAsync.Promise` that the publisher invokes when the publisher emits elements or errors.
     ///   - promise: A closure that is invoked in the future when an element or error is available. This closure may be invoked multiple times.
-    public init(_ attemptToFulfill: @escaping (_ promise: Promise) -> Void) {
+    public init(_ attemptToFulfill: @escaping (_ promise: @escaping Promise) -> Void) {
         self.task = attemptToFulfill
     }
     
@@ -46,7 +46,7 @@ extension TryAsync where Failure == Error {
     /// - Parameters:
     ///   - attemptToFulfill: An error-throwing `TryAsync.Promise` that the publisher invokes when the publisher emits elements or errors.
     ///   - promise: A closure that is invoked in the future when an element or error is available. This closure may be invoked multiple times.
-    public init(_ attemptToFulfill: @escaping (_ promise: Promise) throws -> Void) {
+    public init(_ attemptToFulfill: @escaping (_ promise: @escaping Promise) throws -> Void) {
         self.task = { promise in
             do {
                 try attemptToFulfill(promise)
