@@ -27,7 +27,7 @@ public extension Publisher {
     ///   - promise: The closure to invoke in the future, when an element or an error is available. This closure receives one parameter: a `Result` that contains either a single element or an error.
     /// - Returns: A publisher that uses promises in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
     func tryAsyncMap<T, U>(_ transform: @escaping (_ value: Output, _ promise: @escaping (Result<T, U>) -> Void) -> Void) -> Publishers.TryAsyncMap<Publishers.MapError<Self, Error>, T> where U: Error {
-        let typeErasedTransform = { (value: Output, promise: (Result<T, Error>) -> Void) -> Void in
+        let typeErasedTransform = { (value: Output, promise: @escaping (Result<T, Error>) -> Void) -> Void in
             let typedPromise = { (result: Result<T, U>) -> Void in
                 switch result {
                 case let .success(output): promise(.success(output))
@@ -47,7 +47,7 @@ public extension Publisher {
     ///   - promise: The closure to invoke in the future, when an element or an error is available.
     /// - Returns: A publisher that uses promises in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
     func tryAsyncMap<T, U>(_ transform: @escaping (_ value: Output, _ promise: @escaping (Result<T, U>) -> Void) throws -> Void) -> Publishers.TryAsyncMap<Publishers.MapError<Self, Error>, T> where U: Error {
-        let typeErasedTransform = { (value: Output, promise: (Result<T, Error>) -> Void) -> Void in
+        let typeErasedTransform = { (value: Output, promise: @escaping (Result<T, Error>) -> Void) -> Void in
             let typedPromise = { (result: Result<T, U>) -> Void in
                 switch result {
                 case let .success(output): promise(.success(output))
@@ -73,7 +73,7 @@ public extension Publisher where Failure == Error {
     ///   - promise: The closure to invoke in the future, when an element or an error is available.
     /// - Returns: A publisher that uses promises in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
     func tryAsyncMap<T, U>(_ transform: @escaping (_ value: Output, _ promise: @escaping (Result<T, U>) -> Void) -> Void) -> Publishers.TryAsyncMap<Self, T> where U: Error {
-        let typeErasedTransform = { (value: Output, promise: (Result<T, Error>) -> Void) -> Void in
+        let typeErasedTransform = { (value: Output, promise: @escaping (Result<T, Error>) -> Void) -> Void in
             let typedPromise = { (result: Result<T, U>) -> Void in
                 switch result {
                 case let .success(output): promise(.success(output))
@@ -93,7 +93,7 @@ public extension Publisher where Failure == Error {
     ///   - promise: The closure to invoke in the future, when an element or an error is available.
     /// - Returns: A publisher that uses promises in the provided closure to map elements from the upstream publisher to new elements that it then publishes.
     func tryAsyncMap<T, U>(_ transform: @escaping (_ value: Output, _ promise: @escaping (Result<T, U>) -> Void) throws -> Void) -> Publishers.TryAsyncMap<Self, T> where U: Error {
-        let typeErasedTransform = { (value: Output, promise: (Result<T, Error>) -> Void) -> Void in
+        let typeErasedTransform = { (value: Output, promise: @escaping (Result<T, Error>) -> Void) -> Void in
             let typedPromise = { (result: Result<T, U>) -> Void in
                 switch result {
                 case let .success(output): promise(.success(output))

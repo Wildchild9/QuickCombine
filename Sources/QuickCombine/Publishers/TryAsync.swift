@@ -15,7 +15,7 @@ public struct TryAsync<Output, Failure>: Publisher where Failure: Error {
     /// The promise closure receives one parameter: a `Result` that contains either a single element published by a `TryAsync` publisher, or an error.
     public typealias Promise = (Result<Output, Failure>) -> Void
     
-    private let task: (_ promise: Promise) -> Void
+    private let task: (@escaping Promise) -> Void
     
     /// Creates a publisher that invokes a promise closure when the publisher emits an element or an error.
     ///

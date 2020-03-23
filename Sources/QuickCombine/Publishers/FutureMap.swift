@@ -24,7 +24,7 @@ public extension Publishers {
         public let upstream: Upstream
         
         /// The closure that asynchronously transforms all upstream elements using a promise closure that can be invoked only once. Any subsequent invocations of the promise closure will be ignored.
-        public let transform: (Upstream.Output, Promise) -> Void
+        public let transform: (Upstream.Output, @escaping Promise) -> Void
         
         public init(upstream: Upstream, transform: @escaping (_ value: Upstream.Output, _ promise: @escaping Promise) -> Void) {
             self.upstream = upstream

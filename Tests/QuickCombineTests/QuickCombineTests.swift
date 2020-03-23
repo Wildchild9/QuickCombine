@@ -8,8 +8,8 @@ final class QuickCombineTests: XCTestCase {
         let nilString: String? = nil
         let presentString: String? = "Some string"
 
-        let expectation1 = XCTestExpectation()
-        let expectation2 = XCTestExpectation()
+        let expectation = XCTestExpectation()
+        expectation.expectedFulfillmentCount = 3
 
         Just(nilString)
             .setFailureType(to: Error.self)
@@ -24,7 +24,7 @@ final class QuickCombineTests: XCTestCase {
                 } else {
                     XCTFail("Must complete with failure.")
                 }
-                expectation1.fulfill()
+                expectation.fulfill()
             }) { _ in }
             .cancel()
         
@@ -35,13 +35,32 @@ final class QuickCombineTests: XCTestCase {
                 if case .failure = completion {
                     XCTFail("Value is present")
                 }
-                expectation2.fulfill()
+                expectation.fulfill()
             }) { value in
                 XCTAssertEqual(value, "Some string")
             }
             .cancel()
         
-        wait(for: [expectation1, expectation2], timeout: 5)
+        enum Foo: Error {
+            case error
+        }
+        func staticType<T>(of _: T) -> String {
+            return "\(T.self)"
+        }
+        
+        Just(nilString)
+            .replaceNil(with: Foo.error)
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    XCTAssertEqual(staticType(of: error), "Foo")
+                    print("Error Type ▿")
+                    print("  Static:", staticType(of: error))
+                    print("  Dynamic:", type(of: error))
+                }
+                expectation.fulfill()
+            }, receiveValue: { _ in })
+        
+        wait(for: [expectation], timeout: 5)
     }
     
     func testIgnoreFailure() {
@@ -113,10 +132,10 @@ final class QuickCombineTests: XCTestCase {
     func testTryAsync() {
         let expectation1 = XCTestExpectation()
         let expectation2 = XCTestExpectation()
-        
+
         expectation1.expectedFulfillmentCount = 2
         expectation2.expectedFulfillmentCount = 3
-        
+
         TryAsync<String, CustomError> { promise in
             promise(.success("a"))
             promise(.failure(CustomError()))
@@ -132,7 +151,7 @@ final class QuickCombineTests: XCTestCase {
                 expectation2.fulfill()
             }
             .cancel()
-        
+
         wait(for: [expectation1, expectation2], timeout: 2)
     }
     
@@ -150,18 +169,19 @@ final class QuickCombineTests: XCTestCase {
                 expectation.fulfill()
             }
             .cancel()
-        
+
         wait(for: [expectation], timeout: 2)
     }
     
     func testTryAsyncMap() {
         let expectation1 = XCTestExpectation()
         let expectation2 = XCTestExpectation()
-        
+
+        expectation1.expectedFulfillmentCount = 1
         expectation1.assertForOverFulfill = true
         expectation2.expectedFulfillmentCount = 3
         expectation2.assertForOverFulfill = true
-        
+
         Just("a")
             .setFailureType(to: CustomError.self)
             .tryAsyncMap { (value, promise: (Result<String, CustomError>) -> Void) in
@@ -179,7 +199,7 @@ final class QuickCombineTests: XCTestCase {
                 expectation2.fulfill()
             }
             .cancel()
-            
+
         wait(for: [expectation1, expectation2], timeout: 2)
     }
     

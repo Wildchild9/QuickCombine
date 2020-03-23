@@ -17,7 +17,7 @@ public struct Async<Output>: Publisher {
     /// The promise closure receives one paramater: a single element published by an `Async` publisher.
     public typealias Promise = (Output) -> Void
         
-    private let task: (Promise) -> Void
+    private let task: (@escaping Promise) -> Void
     
     /// Creates a publisher that invokes a promise closure when the publisher emits an element.
     ///
