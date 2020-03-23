@@ -11,13 +11,13 @@ QuickCombine provides additional operators and publishers to boost your producti
   - [`TryAsync`](#tryasync)
   
 - **[Operators](#operators)**
-  - Asynchronous:
-    - [`asyncMap`](#asyncmap)
-    - [`tryAsyncMap`](#tryasyncmap)
+  - Asynchronous Mapping:
     - [`futureMap`](#futuremap)
     - [`tryFutureMap`](#tryfuturemap)
+    - [`asyncMap`](#asyncmap)
+    - [`tryAsyncMap`](#tryasyncmap)
     
-  - Overloads:
+  - Convenience Overloads:
     - [`compactMap`](#compactmap)
     - [`replaceNil`](#replacenil)
     - [`assign`](#assign)
@@ -69,17 +69,102 @@ TryAsync<String, Error> { promise in
 
 ## Operators
 
-#### `asyncMap`
-#### `tryAsyncMap`
+### Asynchronous Mapping
+QuickCombine provides 4 operators for asynchronous mapping operations, `asyncMap`, `tryAsyncMap`, `futureMap`, and `tryFutureMap`. The following tables compares the features of the 4 operators.
+
+| Features | [`futureMap`](#futuremap) | [`tryFutureMap`](#tryfuturemap) | [`asyncMap`](#asyncmap) | [`tryAsyncMap`](#tryasyncmap) |
+| :--- | :---: | :---: | :---: | :---: |
+| Supports asynchronous execution | ✅ | ✅ | ✅ | ✅ |
+| Supports error propogation | ✅ | ❌ | ✅ | ❌ |
+| Produces only one downstream output for each upstream element (one to one) | ✅ | ✅ | ❌ | ❌ |
+| Can produce multiple downstream outputs for each upstream element (one to many) | ❌ | ❌ | ✅ | ✅ |
+
 #### `futureMap`
+This operator asynchronously maps each element for the upstream publisher to one output using promises. Upon the first promise being called, `futureMap` will ignore all subsequent promises and pass a finished completion state downstream. Since `asyncMap` cannot produce any errors, its error type is `Never`. For an operator with the same functionality as `futureMap` but with error propagation, see [`tryFutureMap`](#tryfuturemap).
+
+In the following example, `futureMap` is used to retrieve the value at a specific location in a database.
+```swift
+Just(someDatabasePath)
+    .futureMap { path, promise in
+        getValueInDatabase(at: path) { value in
+            promise((path, value))
+        }
+    }
+    .sink { (path, value) in
+        print("The value of \(path) is \(value)")  // Prints the location of the value and the value itself
+    }
+```
+
 #### `tryFutureMap`
+This operator is the same as `futureMap` with one notable exception, `tryFutureMap` allows errors to be propagated downstream. Because of this, `tryFutureMap`'s promise takes a single argument of type `Result<Output, Upstream.Failure>`.
+
+In the following example, `tryFutureMap` is used to retrieve the value at a specific location in a database, passing any errors downstream. If the request succeeds, the value is printed, otherwise, the error message is printed.
+```swift
+Just(someDatabasePath)
+    .setFailureType(to: DatabaseError.self)
+    .tryFutureMap { path, promise in
+        retrieveDatabaseValue(at: path) { error, value in
+            if let error = error {
+                promise(.failure(error))
+            } else {
+                promise(.success(result!))
+            }
+        }
+    }
+    .sink(receiveCompletion: { completion in
+        if case let .failure(error) = completion {
+            print(error.localizedDescription)
+        }
+    }, receiveValue: { value in
+        print(value)
+    })
+```
+In the case that throwing functions are used within the body of `tryFutureMap`, the `Failure` type of the resultant publisher will be `Error`.
+
+#### `asyncMap`
+This operator allows you to asynchronously map elements from an upstream publisher using promises. For each upstream output, this publisher may produce multiple outputs. Because of the potential to produce any number of outputs, `asyncMap` never passes on a completion state and as such must explicitly be cancelled. Since `asyncMap` cannot produce any errors, its error type is `Never`. For the same functionality with error propagation, see [`tryAsyncMap`](#tryasyncmap).
+
+In the following example, `asyncMap` is used to asynchronously pass a value at a path in a database downstream whenever it changes.
+```swift
+Just("Some/Database/Path") 
+    .asyncMap { path, promise in
+        observeValueChanged(at: path, onValueChanged: { newValue in
+            promise(newValue)
+        })
+    }
+```
+
+#### `tryAsyncMap`
+This operator is the same as `asyncMap` with one notable exception, `tryAsyncMap` allows errors to be propagated downstream. Because of this, `tryAsyncMap`'s promise takes a single argument of type `Result<Output, Upstream.Failure>`.
+
+In the following example, `tryAsyncMap` is used to asynchronously pass the value at a path in a database, or an error if the request fails, downstream whenever it changes.
+```swift
+Just("Some/Database/Path") 
+    .tryAsyncMap { path, promise in
+        observeValueChanged(at: path, onValueChanged: { possibleNewValue in
+            if let newValue = possibleNewValue {
+                promise(.success(newValue))
+            } else {
+                promise(.failure(DatabaseError.couldNotAccessValue))
+            }
+        })
+    }
+```
+In the case that throwing functions are used within the body of `tryAsyncMap`, the `Failure` type of the resultant publisher will be `Error`.
+
+----
 
 #### `compactMap`
+
 #### `replaceNil`
+
 #### `assign`
 
 #### `ignoreFailure`
+
 #### `eraseToAnyError`
+
 #### `passthrough`
+
 #### `passthroughAssign`
 
