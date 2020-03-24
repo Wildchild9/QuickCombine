@@ -383,6 +383,7 @@ final class QuickCombineTests: XCTestCase {
         ("testPassthrough", testPassthrough),
         ("testAssign", testAssign),
         ("testPassthroughAssign", testPassthroughAssign),
+        ("testThen", testThen),
     ]
 }
 
