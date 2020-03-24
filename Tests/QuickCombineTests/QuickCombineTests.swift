@@ -329,10 +329,6 @@ final class QuickCombineTests: XCTestCase {
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
-        ("testAsync", testAsync),
-        ("testTryAsync", testTryAsync),
-        ("testAsyncMap", testAsyncMap),
-        ("testTryAsyncMap", testTryAsyncMap),
         ("testFutureMap", testFutureMap),
         ("testTryFutureMap", testTryFutureMap),
         ("testCompactMap", testCompactMap),
