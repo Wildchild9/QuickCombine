@@ -22,14 +22,13 @@ public extension Publishers {
         
         public init(upstream: Upstream, transform: @escaping () -> NextPublisher) {
             self.upstream = upstream
-            self.nextPublisher = nextPublisher
+            self.transform = transform
         }
     
-        public func receive<S>(subscriber: S) where S : Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
+        public func receive<S>(subscriber: S) where S : Subscriber, Failure == S.Failure, Output == S.Input {
             upstream
-                .ignoreOutput()
                 .flatMap { _ in
-                    nextPublisher
+                    self.transform()
                 }
                 .subscribe(subscriber)
         }
