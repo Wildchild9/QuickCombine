@@ -326,6 +326,53 @@ final class QuickCombineTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
     
+    func testThen() {
+        let expectation1 = XCTestExpectation()
+        let expectation2 = XCTestExpectation()
+        
+        enum Foo: Error {
+            case error
+        }
+        enum Bar: Error {
+            case error
+        }
+        func staticType<T>(of _: T) -> String {
+            return "\(T.self)"
+        }
+        
+        Future<String, Error> { promise in
+            promise(.success(""))
+        }
+        .then {
+            Future<Int, Foo> { promise in
+                promise(.success(10))
+            }
+        }
+        .sink(receiveCompletion: { _ in }) { value in
+            expectation1.fulfill()
+        }
+        
+        Future<String, Never> { promise in
+            promise(.success(""))
+        }
+        .then {
+            Future<Int, Bar> { promise in
+                promise(.failure(Bar.error))
+            }
+        }
+        .sink(receiveCompletion: { completion in
+            if case .failure(let error) = completion {
+                XCTAssertEqual(staticType(of: error), "Bar")
+                expectation2.fulfill()
+            }
+        }) { value in
+            XCTFail()
+        }
+        
+        
+        wait(for: [expectation1, expectation2], timeout: 2)
+    }
+    
     static var allTests = [
         ("testReplaceNilWithError", testReplaceNilWithError),
         ("testIgnoreFailure", testIgnoreFailure),
