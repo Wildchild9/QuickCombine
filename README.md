@@ -54,7 +54,7 @@ A minimum of **Swift 5.1** is required to build QuickCombine (Xcode 11).
   Just("Some/Database/Path")
       .setFailureType(to: DatabaseError.self)
       .tryFutureMap { path, promise in
-      retrieveDatabaseValue(at: path) { result, error in
+          retrieveDatabaseValue(at: path) { result, error in
               if let error = error {
                   promise(.failure(error))
               } else {
